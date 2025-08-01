@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Forum - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <style>
+        .topic-link { display: flex; align-items: center; justify-content: space-between; background: #f3e8ff; border-radius: 1rem; padding: 1.2rem 1.5rem; margin-bottom: 1rem; cursor: pointer; transition: box-shadow 0.2s; box-shadow: 0 2px 8px #b39ddb11; }
+        .topic-link:hover { box-shadow: 0 6px 24px #b39ddb33; background: #ede7f6; }
+        .topic-title { font-size: 1.15rem; font-weight: 700; color: #7c4dff; }
+        .reply-badge { background: linear-gradient(90deg, #b2ebf2, #b39ddb); color: #fff; font-size: 0.95rem; font-weight: 700; border-radius: 1rem; padding: 0.3rem 1.1rem; margin-left: 1rem; }
+        .modal-bg { display: none; position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(44,62,80,0.18); z-index: 10000; align-items: center; justify-content: center; }
+        .modal { background: #fff; border-radius: 1.5rem; max-width: 420px; width: 95vw; padding: 2rem 1.5rem; box-shadow: 0 8px 32px #b39ddb33; text-align: left; position: relative; }
+        .modal-close { position: absolute; right: 1.2rem; top: 1.2rem; font-size: 1.5rem; color: #b39ddb; cursor: pointer; }
+        .reply-list { margin: 1.2rem 0 1.2rem 0; padding: 0; list-style: none; }
+        .reply-list li { background: #e0f7fa; border-radius: 1rem; margin-bottom: 0.7rem; padding: 0.7rem 1rem; }
+        .reply-form input { width: 100%; border-radius: 1rem; padding: 0.7rem; border: 1px solid #b2ebf2; margin-bottom: 0.7rem; }
+    </style>
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in" style="max-width: 700px;">
+            <h2 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h2>
+            <p class="subtitle">Join the conversation. Support and be supported.</p>
+            <form id="forumForm" style="margin-bottom:2rem;">
+                <input type="text" name="topic" placeholder="Start a new topic..." required style="width:100%;border-radius:1rem;padding:1rem;font-size:1rem;">
+                <button type="submit" class="btn" style="margin-top:1rem;">Post Topic</button>
+            </form>
+            <div class="forum-list" id="forum-list">
+                <!-- Forum topics will be loaded here -->
+            </div>
+            <a href="dashboard.html" class="btn" style="margin-top:2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="modal-bg" id="modal-bg">
+        <div class="modal" id="modal">
+            <span class="modal-close" id="modal-close">&times;</span>
+            <div id="modal-topic-title" class="topic-title"></div>
+            <ul class="reply-list" id="reply-list"></ul>
+            <form id="replyForm" class="reply-form">
+                <input type="text" name="reply" placeholder="Write a reply..." required>
+                <button type="submit" class="btn btn-outline">Reply</button>
+            </form>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const forumForm = document.getElementById('forumForm');
+            const forumList = document.getElementById('forum-list');
+            const modalBg = document.getElementById('modal-bg');
+            const modal = document.getElementById('modal');
+            const modalClose = document.getElementById('modal-close');
+            const modalTopicTitle = document.getElementById('modal-topic-title');
+            const replyList = document.getElementById('reply-list');
+            const replyForm = document.getElementById('replyForm');
+            let topics = JSON.parse(localStorage.getItem('forumTopics')) || [
+                { topic: "How do you manage exam stress?", replies: 12, replyList: ["I take deep breaths and break my work into chunks.", "I talk to friends when I feel overwhelmed."] },
+                { topic: "Best self-care routines?", replies: 8, replyList: ["Journaling and going for walks.", "I love listening to music and meditating."] },
+                { topic: "Dealing with homesickness", replies: 5, replyList: ["Video calls with family help a lot.", "I joined a club to meet new people."] }
+            ];
+            let currentTopicIdx = null;
+            function displayTopics() {
+                forumList.innerHTML = '';
+                if (topics.length === 0) {
+                    forumList.innerHTML = '<div style="text-align:center;color:#b39ddb;margin-top:2rem;">No topics yet. Start the conversation!</div>';
+                }
+                topics.forEach((t, idx) => {
+                    const topicDiv = document.createElement('div');
+                    topicDiv.className = 'topic-link';
+                    topicDiv.innerHTML = `<span class='topic-title'>${t.topic}</span><span class='reply-badge'>${t.replies} replies</span>`;
+                    topicDiv.onclick = () => openModal(idx);
+                    forumList.appendChild(topicDiv);
+                });
+            }
+            function openModal(idx) {
+                currentTopicIdx = idx;
+                modalTopicTitle.textContent = topics[idx].topic;
+                replyList.innerHTML = '';
+                (topics[idx].replyList || []).forEach(r => {
+                    const li = document.createElement('li');
+                    li.textContent = r;
+                    replyList.appendChild(li);
+                });
+                modalBg.style.display = 'flex';
+            }
+            modalClose.onclick = () => { modalBg.style.display = 'none'; };
+            modalBg.onclick = (e) => { if (e.target === modalBg) modalBg.style.display = 'none'; };
+            replyForm.onsubmit = (e) => {
+                e.preventDefault();
+                const val = replyForm.reply.value.trim();
+                if (val && currentTopicIdx !== null) {
+                    topics[currentTopicIdx].replyList = topics[currentTopicIdx].replyList || [];
+                    topics[currentTopicIdx].replyList.push(val);
+                    topics[currentTopicIdx].replies++;
+                    localStorage.setItem('forumTopics', JSON.stringify(topics));
+                    openModal(currentTopicIdx);
+                    replyForm.reset();
+                }
+            };
+            forumForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newTopic = e.target.topic.value.trim();
+                if (newTopic) {
+                    topics.unshift({ topic: newTopic, replies: 0, replyList: [] });
+                    localStorage.setItem('forumTopics', JSON.stringify(topics));
+                    displayTopics();
+                    e.target.reset();
+                }
+            });
+            displayTopics();
+        });
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html> 

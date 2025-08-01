@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindfulSpace - Student Mental Health Support</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in">
+            <h1 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h1>
+            <p class="subtitle">A peaceful place for students to share, learn, and grow together.</p>
+            <div class="hero-actions">
+                <a href="login.html" class="btn">Login</a>
+                <a href="signup.html" class="btn btn-outline">Sign Up</a>
+            </div>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html> 

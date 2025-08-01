@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindfulness Tools - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <style>
+        .breathing-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(120deg, #43e97b 0%, #38f9d7 100%);
+            margin: 2rem auto 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: breathe 8s infinite;
+        }
+        @keyframes breathe {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.25); }
+            50% { transform: scale(1.5); }
+            75% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+        .breathe-text {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 8px #38f9d733;
+        }
+        .meditation-list {
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .meditation-card {
+            background: #e0eafc;
+            border-radius: 1rem;
+            padding: 1.2rem;
+            text-align: left;
+            box-shadow: 0 2px 8px 0 #38f9d711;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in" style="max-width: 500px;">
+            <h2 class="main-title">Mindfulness Tools</h2>
+            <p class="subtitle">Take a moment for yourself. Try a breathing exercise or guided meditation.</p>
+            <div class="breathing-circle" id="breathing-circle">
+                <span class="breathe-text" id="breathe-text">Breathe In</span>
+            </div>
+            <div style="text-align:center;margin-bottom:2rem;">
+                <button class="btn btn-outline" id="start-breathing">Start Breathing Exercise</button>
+            </div>
+            <div class="meditation-list">
+                <div class="meditation-card">
+                    <b>10-Minute Guided Meditation</b><br>
+                    <a href="https://www.youtube.com/watch?v=O-6f5wQXSu8" target="_blank" class="btn btn-outline" style="margin-top:0.7rem;">Watch on YouTube</a>
+                </div>
+                <div class="meditation-card">
+                    <b>5-Minute Breathing Exercise</b><br>
+                    <a href="https://www.youtube.com/watch?v=nmFUDkj1Aq0" target="_blank" class="btn btn-outline" style="margin-top:0.7rem;">Watch on YouTube</a>
+                </div>
+            </div>
+            <a href="dashboard.html" class="btn" style="margin-top:2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+    <script>
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Breathing animation text
+        const breatheText = document.getElementById('breathe-text');
+        const startBtn = document.getElementById('start-breathing');
+        let breatheInterval;
+        startBtn.onclick = () => {
+            clearInterval(breatheInterval);
+            let phase = 0;
+            const phases = ["Breathe In", "Hold", "Breathe Out", "Hold"];
+            const times = [2000, 2000, 3000, 1000];
+            function nextPhase() {
+                breatheText.textContent = phases[phase];
+                phase = (phase + 1) % phases.length;
+                breatheInterval = setTimeout(nextPhase, times[phase]);
+            }
+            nextPhase();
+        };
+    </script>
+</body>
+</html> 

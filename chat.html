@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <style>
+        .chat-box { background: #e0f7fa; border-radius: 1.5rem; padding: 1.2rem; min-height: 220px; max-height: 260px; overflow-y: auto; margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.7rem; }
+        .bubble { max-width: 75%; padding: 0.8rem 1.2rem; border-radius: 1.5rem; font-size: 1.08rem; line-height: 1.5; word-break: break-word; box-shadow: 0 2px 8px #b39ddb11; opacity: 0; animation: fadeInBubble 0.5s forwards; }
+        .bubble.user { align-self: flex-end; background: linear-gradient(90deg, #b39ddb, #80deea); color: #fff; border-bottom-right-radius: 0.5rem; }
+        .bubble.counsellor { align-self: flex-start; background: #b2ebf2; color: #2d3a4b; border-bottom-left-radius: 0.5rem; }
+        @keyframes fadeInBubble { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+        .chat-bar { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; }
+        .chat-bar input { flex: 1; border-radius: 1.5rem; padding: 0.8rem 1.2rem; border: 1.5px solid #b2ebf2; font-size: 1.08rem; }
+        .chat-bar button { border-radius: 1.5rem; padding: 0.8rem 2.2rem; font-size: 1.08rem; }
+    </style>
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in" style="max-width: 500px;">
+            <h2 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h2>
+            <p class="subtitle">Connect with a counsellor or peer mentor.</p>
+            <div class="chat-box" id="chat-box"></div>
+            <div id="typing-indicator" style="display:none;color:#b39ddb;font-size:1.05rem;margin-bottom:0.5rem;text-align:left;">Counsellor is typing...</div>
+            <form id="chatForm" class="chat-bar">
+                <input type="text" name="message" placeholder="Type your message..." required autocomplete="off">
+                <button type="submit" class="btn">Send</button>
+            </form>
+            <a href="dashboard.html" class="btn" style="margin-top:2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatForm = document.getElementById('chatForm');
+            const chatBox = document.getElementById('chat-box');
+            const typingIndicator = document.getElementById('typing-indicator');
+            const messages = JSON.parse(sessionStorage.getItem('chatMessages')) || [
+                { sender: 'counsellor', text: 'Hi, how can I help you today?' }
+            ];
+            function displayMessages() {
+                chatBox.innerHTML = '';
+                messages.forEach(msg => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble ' + msg.sender;
+                    bubble.textContent = msg.text;
+                    chatBox.appendChild(bubble);
+                });
+                setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+            }
+            function botReply(userMsg) {
+                typingIndicator.style.display = 'block';
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    const msgLower = userMsg.toLowerCase();
+                    let replies = [];
+                    // Greetings
+                    if (msgLower.match(/\b(hi|hello|hey|good morning|good evening)\b/)) {
+                        replies = ["Hello! I’m here to listen. How are you feeling today?"];
+                    }
+                    // Gratitude
+                    else if (msgLower.match(/\b(thank you|thanks|appreciate)\b/)) {
+                        replies = ["You’re very welcome! Remember, you’re not alone."];
+                    }
+                    // Anxiety/Stress
+                    else if (msgLower.includes('anxious') || msgLower.includes('anxiety') || msgLower.includes('stress') || msgLower.includes('stressed')) {
+                        replies = [
+                            "It’s normal to feel anxious or stressed sometimes.",
+                            "Would you like to try a <a href='mindfulness.html' target='_blank' style='color:#7c4dff;text-decoration:underline;'>breathing exercise</a>?",
+                            "Here’s an article that might help: <a href='https://www.mind.org.uk/information-support/types-of-mental-health-problems/stress/' target='_blank' style='color:#7c4dff;text-decoration:underline;'>Managing Stress</a>"
+                        ];
+                    }
+                    // Sadness/Depression
+                    else if (msgLower.includes('sad') || msgLower.includes('depressed') || msgLower.includes('down')) {
+                        replies = [
+                            "I’m sorry you’re feeling this way. Remember, you matter.",
+                            "Would you like to talk more about what’s on your mind?",
+                            "If you need extra support, consider reaching out to a trusted adult or professional."
+                        ];
+                    }
+                    // Happy/Good
+                    else if (msgLower.includes('happy') || msgLower.includes('good') || msgLower.includes('great')) {
+                        replies = [
+                            "That’s wonderful to hear! Celebrate your positive moments.",
+                            "What’s something that made you smile today?"
+                        ];
+                    }
+                    // Help
+                    else if (msgLower.includes('help') || msgLower.includes('support')) {
+                        replies = [
+                            "If you need urgent help, please reach out to a trusted adult or helpline.",
+                            "You can also try our <a href='mindfulness.html' target='_blank' style='color:#7c4dff;text-decoration:underline;'>Mindfulness Tools</a> for some calm right now."
+                        ];
+                    }
+                    // Advice
+                    else if (msgLower.includes('advice') || msgLower.includes('tips')) {
+                        replies = [
+                            "I’m happy to share some tips! What area would you like advice on? (e.g., study, sleep, stress)"
+                        ];
+                    }
+                    // Random encouragement
+                    else if (Math.random() < 0.2) {
+                        const encouragements = [
+                            "Remember to take a deep breath!",
+                            "You are stronger than you think.",
+                            "It’s okay to take a break.",
+                            "You’re doing your best, and that’s enough."
+                        ];
+                        replies = [encouragements[Math.floor(Math.random()*encouragements.length)]];
+                    }
+                    // Default
+                    else {
+                        replies = ["Thank you for sharing. I am here to listen."];
+                    }
+                    // Send replies one by one
+                    function sendReplies(i) {
+                        if (i < replies.length) {
+                            messages.push({ sender: 'counsellor', text: replies[i], html: true });
+                            sessionStorage.setItem('chatMessages', JSON.stringify(messages));
+                            displayMessages();
+                            setTimeout(() => sendReplies(i+1), 1200);
+                        }
+                    }
+                    sendReplies(0);
+                }, 900);
+            }
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newMsg = e.target.message.value.trim();
+                if (newMsg) {
+                    messages.push({ sender: 'user', text: newMsg });
+                    sessionStorage.setItem('chatMessages', JSON.stringify(messages));
+                    displayMessages();
+                    e.target.reset();
+                    botReply(newMsg);
+                }
+            });
+            displayMessages();
+        });
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Hub - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in" style="max-width: 700px;">
+            <h2 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h2>
+            <p class="subtitle">Curated articles and videos for your mental wellness.</p>
+            <div class="resource-list">
+                <div class="resource-card">
+                    <h3>Managing Exam Stress</h3>
+                    <p>Tips and techniques to stay calm and focused during exams.</p>
+                    <a href="https://www.mind.org.uk/information-support/types-of-mental-health-problems/stress/" target="_blank" class="btn btn-outline">Read Article</a>
+                </div>
+                <div class="resource-card">
+                    <h3>Guided Meditation (Video)</h3>
+                    <p>Relax and recharge with this 10-minute guided meditation.</p>
+                    <a href="https://www.youtube.com/watch?v=O-6f5wQXSu8" target="_blank" class="btn btn-outline">Watch Video</a>
+                </div>
+                <div class="resource-card">
+                    <h3>Dealing with Anxiety</h3>
+                    <p>Understand anxiety and learn practical coping strategies.</p>
+                    <a href="https://www.nhs.uk/mental-health/conditions/anxiety/" target="_blank" class="btn btn-outline">Read Article</a>
+                </div>
+            </div>
+            <a href="dashboard.html" class="btn" style="margin-top:2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html> 

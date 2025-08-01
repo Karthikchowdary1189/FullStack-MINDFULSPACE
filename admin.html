@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in" style="max-width: 700px;">
+            <h2 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h2>
+            <p class="subtitle">Manage users, content, and view analytics.</p>
+            <div class="admin-section" style="margin-bottom:2rem;">
+                <b>Sample Analytics:</b>
+                <ul style="text-align:left;max-width:400px;margin:1rem auto 0 auto;">
+                    <li>Active Users: <b>128</b></li>
+                    <li>Posts This Week: <b>42</b></li>
+                    <li>Flagged Posts: <b>3</b></li>
+                    <li>Most Viewed Article: <b>Managing Exam Stress</b></li>
+                </ul>
+            </div>
+            <div class="admin-section">
+                <b>Moderation Tools:</b>
+                <ul style="text-align:left;max-width:400px;margin:1rem auto 0 auto;">
+                    <li><button class="btn btn-outline" style="width:100%;margin-bottom:0.5rem;">Review Flagged Posts</button></li>
+                    <li><button class="btn btn-outline" style="width:100%;">Manage Users</button></li>
+                </ul>
+            </div>
+            <a href="dashboard.html" class="btn" style="margin-top:2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html> 

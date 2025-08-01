@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feelings Wall - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in" style="max-width: 700px;">
+            <h2 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h2>
+            <p class="subtitle">Share your thoughts and support others, anonymously.</p>
+            <form id="journalForm" style="margin-bottom:2rem;">
+                <textarea name="entry" placeholder="How are you feeling today?" required style="width:100%;min-height:80px;border-radius:1rem;padding:1rem;font-size:1rem;"></textarea>
+                <button type="submit" class="btn" style="margin-top:1rem;">Post Anonymously</button>
+            </form>
+            <div class="journal-list" id="journal-list">
+                <!-- Anonymous posts will be loaded here -->
+            </div>
+            <a href="dashboard.html" class="btn" style="margin-top:2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const journalForm = document.getElementById('journalForm');
+            const journalList = document.getElementById('journal-list');
+            const posts = JSON.parse(localStorage.getItem('journalPosts')) || [
+                "Feeling overwhelmed, but grateful for my friends. 💚",
+                "Today was tough, but tomorrow is a new day. 🌱",
+                "I’m proud of myself for asking for help. 🙌"
+            ];
+            function detectEmotion(text) {
+                const t = text.toLowerCase();
+                if (t.match(/(happy|joy|grateful|excited|love|great|good|awesome|amazing)/)) return {emoji:'😊', mood:'positive'};
+                if (t.match(/(sad|down|depressed|cry|lonely|hopeless|bad|tired|exhausted)/)) return {emoji:'😢', mood:'negative'};
+                if (t.match(/(anxious|anxiety|nervous|worried|stress|stressed|panic)/)) return {emoji:'😰', mood:'anxious'};
+                if (t.match(/(angry|mad|frustrated|annoyed|irritated)/)) return {emoji:'😡', mood:'angry'};
+                return {emoji:'😐', mood:'neutral'};
+            }
+            function displayPosts() {
+                journalList.innerHTML = '';
+                posts.forEach(post => {
+                    const {emoji, mood} = detectEmotion(post);
+                    const postCard = document.createElement('div');
+                    postCard.className = 'journal-card';
+                    postCard.innerHTML = `<span style='font-size:1.5rem;margin-right:0.5rem;'>${emoji}</span>${post}`;
+                    if (mood === 'negative' || mood === 'anxious') {
+                        const suggest = document.createElement('div');
+                        suggest.innerHTML = `<a href='mindfulness.html' class='btn btn-outline' style='margin-top:0.7rem;'>Try a Mindfulness Tool</a>`;
+                        postCard.appendChild(suggest);
+                    }
+                    journalList.appendChild(postCard);
+                });
+            }
+            journalForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newPost = e.target.entry.value.trim();
+                if (newPost) {
+                    posts.unshift(newPost);
+                    localStorage.setItem('journalPosts', JSON.stringify(posts));
+                    displayPosts();
+                    e.target.reset();
+                }
+            });
+            displayPosts();
+        });
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html> 

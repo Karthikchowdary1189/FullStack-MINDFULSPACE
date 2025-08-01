@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in" style="max-width: 500px;">
+            <h2 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h2>
+            <p class="subtitle">Log your mood and see your progress.</p>
+            <form id="moodForm" style="margin-bottom:2rem;">
+                <label for="mood" style="font-weight:600;">How do you feel today?</label><br>
+                <input type="range" min="1" max="5" value="3" id="mood" name="mood" style="width:100%;margin:1rem 0;">
+                <div style="display:flex;justify-content:space-between;font-size:1.5rem;">
+                    <span>😞</span><span>😐</span><span>😊</span>
+                </div>
+                <button type="submit" class="btn" style="margin-top:1rem;">Log Mood</button>
+            </form>
+            <div class="mood-chart" id="mood-chart" style="background:#e0f7fa;border-radius:1rem;padding:1rem;min-height:120px;">
+                <b>Your Mood Trend:</b>
+                <div id="mood-bars" style="margin-top:1rem;display:flex;gap:0.5rem;align-items:flex-end;height:60px;"></div>
+            </div>
+            <a href="dashboard.html" class="btn" style="margin-top:2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const moodForm = document.getElementById('moodForm');
+            const moodBars = document.getElementById('mood-bars');
+            const moods = JSON.parse(localStorage.getItem('moodLogs')) || [3, 5, 4, 2, 4];
+            function displayMoods() {
+                moodBars.innerHTML = '';
+                moods.slice(-7).forEach(val => {
+                    const bar = document.createElement('div');
+                    bar.style.width = '18%';
+                    bar.style.background = val >= 4 ? '#80deea' : val === 3 ? '#b39ddb' : '#b2ebf2';
+                    bar.style.height = (val * 12 + 10) + 'px';
+                    bar.style.borderRadius = '0.5rem';
+                    moodBars.appendChild(bar);
+                });
+            }
+            moodForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const moodVal = parseInt(e.target.mood.value, 10);
+                moods.push(moodVal);
+                localStorage.setItem('moodLogs', JSON.stringify(moods));
+                displayMoods();
+                e.target.reset();
+                alert('Mood logged!');
+            });
+            displayMoods();
+        });
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html> 

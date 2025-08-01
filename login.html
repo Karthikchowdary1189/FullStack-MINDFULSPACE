@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MindfulSpace</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+    <div class="hero-bg">
+        <div class="container fade-in">
+            <h2 class="main-title" id="logo-title" style="cursor:pointer;">🕊️ MindfulSpace</h2>
+            <p class="subtitle">Log in to your peaceful space.</p>
+            <div style="background: #e0f7fa; border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem;">
+                <strong>Demo Login:</strong><br>
+                <span>Username: <b>test</b></span><br>
+                <span>Password: <b>test123</b></span>
+            </div>
+            <form id="loginForm">
+                <input type="text" name="username" placeholder="Username" required autocomplete="username" value="test">
+                <input type="password" name="password" placeholder="Password" required autocomplete="current-password" value="test123">
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <p style="margin-top:2rem; color:#888;">Sign up is disabled for this demo.</p>
+        </div>
+    </div>
+    <div class="floating-affirmation" id="affirmation">You are enough. You are not alone. 🌱</div>
+    <script>
+        document.querySelector('.fade-in').style.opacity = 0;
+        window.onload = () => {
+            document.querySelector('.fade-in').style.transition = 'opacity 1.2s cubic-bezier(.4,0,.2,1)';
+            document.querySelector('.fade-in').style.opacity = 1;
+        };
+        // Easter egg: click logo 5 times for affirmation
+        let logoClicks = 0;
+        const logo = document.getElementById('logo-title');
+        const affirmation = document.getElementById('affirmation');
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks === 5) {
+                affirmation.style.display = 'block';
+                setTimeout(() => {
+                    affirmation.style.display = 'none';
+                    logoClicks = 0;
+                }, 2500);
+            }
+        });
+    </script>
+    <script src="../scripts/main.js"></script>
+</body>
+</html> 
